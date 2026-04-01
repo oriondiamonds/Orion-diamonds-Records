@@ -1,26 +1,11 @@
 @import "tailwindcss";
 
-/* ── Brand variables ──────────────────────────────────────── */
-:root {
-  --color-gold:        #c9a84c;
-  --color-gold-light:  #e8c97a;
-  --color-surface:     #0f0f0f;
-  --color-surface-2:   #1a1a1a;
-  --color-surface-3:   #242424;
-  --color-border:      #2e2e2e;
-  --color-text:        #f0f0f0;
-  --color-text-muted:  #888;
-}
-
-/* ── Base reset ───────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  background: var(--color-surface);
-  color: var(--color-text);
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
