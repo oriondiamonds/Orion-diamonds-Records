@@ -41,7 +41,7 @@ export default function LoginPage() {
         <div className="bg-white rounded-lg shadow-md p-8">
           <div className="flex flex-col items-center mb-8">
             <Diamond className="w-10 h-10 text-indigo-600 mb-3" />
-            <h1 className="text-xl font-bold text-gray-900">Orion Records</h1>
+            <h1 className="text-xl font-bold text-gray-900">Orion Diamonds Records</h1>
             <p className="text-sm text-gray-500 mt-1">Internal CRM</p>
           </div>
 

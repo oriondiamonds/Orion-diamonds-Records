@@ -16,7 +16,7 @@ export default function Sidebar() {
       <div className="px-5 py-5 border-b border-gray-800">
         <div className="flex items-center gap-2">
           <Diamond className="w-6 h-6 text-indigo-400" />
-          <span className="font-bold text-lg">Orion</span>
+          <span className="font-bold text-lg">Orion Diamonds</span>
         </div>
         <p className="text-xs text-gray-400 mt-1">Records</p>
       </div>
