@@ -14,3 +14,36 @@ body {
 #root {
   height: 100dvh;
 }
+
+/* ── Print ───────────────────────────────────────────────────────────────── */
+/* Screen: push print view off-screen without display:none */
+.print-view {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 210mm;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  /* Hide the app shell — print-view is a sibling of #root on body */
+  #root {
+    display: none !important;
+  }
+
+  /* Bring print view back into the page */
+  .print-view {
+    position: static !important;
+    left: auto !important;
+    width: 100% !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+    color: #000;
+  }
+}
