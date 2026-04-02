@@ -19,7 +19,7 @@ export function registerPricingRoutes(app) {
   // Body: { diamonds, metalWeight, metalType, karat, goldRateOverride? }
   app.post('/api/pricing/calculate', async (req, res) => {
     try {
-      const { diamonds, metalWeight, metalType, karat, goldRateOverride } = req.body
+      const { diamonds, metalWeight, metalType, karat, goldRateOverride, makingChargesOverride } = req.body
 
       const goldRate24k = goldRateOverride
         ? parseFloat(goldRateOverride)
@@ -31,6 +31,7 @@ export function registerPricingRoutes(app) {
         metalType: metalType || 'Gold',
         karat: karat || '18k',
         goldRate24k,
+        makingChargesOverride: makingChargesOverride != null ? parseFloat(makingChargesOverride) : null,
       })
 
       res.json({ ...result, goldRate24k })

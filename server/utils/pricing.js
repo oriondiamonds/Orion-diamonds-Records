@@ -95,7 +95,7 @@ export function getDiamondRatePerCt(shape, weightPerStone) {
  * @param {number}  input.goldRate24k   ₹ per gram of 24K gold
  * @returns {{ diamondTotal, goldTotal, makingCharges, subtotal, gstAmount, totalPrice }}
  */
-export function calculateEnquiryPrice({ diamonds = [], metalWeight = 0, metalType = 'Gold', karat = '18k', goldRate24k = 0 }) {
+export function calculateEnquiryPrice({ diamonds = [], metalWeight = 0, metalType = 'Gold', karat = '18k', goldRate24k = 0, makingChargesOverride = null }) {
   // ── Diamond total ──
   let diamondTotal = 0
   for (const d of diamonds) {
@@ -103,10 +103,15 @@ export function calculateEnquiryPrice({ diamonds = [], metalWeight = 0, metalTyp
     const weight = parseFloat(d.weightPerStone) || 0
     if (count <= 0 || weight <= 0) continue
 
-    const rate = getDiamondRatePerCt(d.shape || 'Round', weight)
-    const base = weight * count * rate
-    const tier = getDiamondTier(weight)
-    diamondTotal += (base * tier.multiplier) + tier.flatAddition
+    if (d.pricePerCt) {
+      // Staff-overridden rate — use directly, no margin applied
+      diamondTotal += count * weight * parseFloat(d.pricePerCt)
+    } else {
+      const rate = getDiamondRatePerCt(d.shape || 'Round', weight)
+      const base = weight * count * rate
+      const tier = getDiamondTier(weight)
+      diamondTotal += (base * tier.multiplier) + tier.flatAddition
+    }
   }
   if (diamonds.some(d => parseInt(d.count) > 0 && parseFloat(d.weightPerStone) > 0)) {
     diamondTotal += BASE_FEES.fee1 + BASE_FEES.fee2
@@ -117,7 +122,7 @@ export function calculateEnquiryPrice({ diamonds = [], metalWeight = 0, metalTyp
   const weight = parseFloat(metalWeight) || 0
   if (weight > 0) {
     if (metalType === 'Silver') {
-      goldTotal = weight * 100  // flat ₹100/g for silver
+      goldTotal = weight * (goldRate24k || 100)  // default ₹100/g, overridable
     } else {
       const karatNum = parseInt(karat) || 18
       goldTotal = weight * (karatNum / 24) * goldRate24k
@@ -126,7 +131,8 @@ export function calculateEnquiryPrice({ diamonds = [], metalWeight = 0, metalTyp
 
   // ── Making charges ──
   const ratePerGram = weight >= 2 ? 700 : 950
-  const makingCharges = weight * ratePerGram * 1.75
+  const autoMaking = weight * ratePerGram * 1.75
+  const makingCharges = makingChargesOverride != null ? makingChargesOverride : autoMaking
 
   // ── GST & total ──
   const subtotal = diamondTotal + goldTotal + makingCharges
@@ -134,11 +140,12 @@ export function calculateEnquiryPrice({ diamonds = [], metalWeight = 0, metalTyp
   const totalPrice = subtotal + gstAmount
 
   return {
-    diamondTotal:  Math.round(diamondTotal),
-    goldTotal:     Math.round(goldTotal),
-    makingCharges: Math.round(makingCharges),
-    subtotal:      Math.round(subtotal),
-    gstAmount:     Math.round(gstAmount),
-    totalPrice:    Math.round(totalPrice),
+    diamondTotal:      Math.round(diamondTotal),
+    goldTotal:         Math.round(goldTotal),
+    makingCharges:     Math.round(makingCharges),
+    autoMakingCharges: Math.round(autoMaking),
+    subtotal:          Math.round(subtotal),
+    gstAmount:         Math.round(gstAmount),
+    totalPrice:        Math.round(totalPrice),
   }
 }
